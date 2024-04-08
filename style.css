@@ -103,3 +103,45 @@ form button:hover {
     color: #e4e400;
 }
 
+.completed {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+.fall {
+    transform: translateY(8rem) rotateZ(20deg);
+    opacity: 0;
+} 
+
+select {
+    appearance: none;
+    outline: none;
+    border: none;
+    color: #1e1d27;
+    width: 10rem;
+    cursor: pointer;
+    padding: 1rem;
+}
+
+.select {
+    margin: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.select::after {
+    content: "\25BC";
+    position: absolute;
+    background: #1e1d27;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    background-color: #1e1d27;
+}
+
+.select:hover::after {
+    background: white;
+    color: #1e1d27;
+}
