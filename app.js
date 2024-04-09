@@ -138,9 +138,6 @@ function getTodos() {
     
     //append to list
     todoList.appendChild(todoDiv);
-
-    //clear todo input value
-    todoInput.value = "";
   })
 }
 
