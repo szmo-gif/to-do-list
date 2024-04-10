@@ -68,8 +68,10 @@ function deleteCheck(event) {
   if (target.classList.contains("complete-btn")) {
     // Marquer la tâche comme complétée
     todo.classList.toggle("completed");
+    saveTodoToLocalStorage(todo.querySelector(".todo-item").innerText, todo.classList.contains("completed"));
   }
 }
+
 
 // Fonction pour filtrer les tâches affichées
 function filterTodo() {
@@ -89,11 +91,24 @@ function filterTodo() {
 }
 
 // Fonction pour enregistrer une tâche dans le stockage local
-function saveTodoToLocalStorage(todoText) {
-  const todos = getTodosFromLocalStorage();
-  todos.push(todoText);
+function saveTodoToLocalStorage(todoText, todoCompleted) {
+  let todos = getTodosFromLocalStorage();
+
+  // Recherche de la tâche existante dans le tableau
+  const existingTodoIndex = todos.findIndex(todo => todo.text === todoText);
+
+  if (existingTodoIndex !== -1) {
+    // Mettre à jour les informations de la tâche existante
+    todos[existingTodoIndex].completed = todoCompleted;
+  } else {
+    // Ajouter une nouvelle tâche si elle n'existe pas déjà
+    todos.push({ text: todoText, completed: todoCompleted });
+  }
+
   localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(todos));
 }
+
+
 
 // Fonction pour récupérer les tâches depuis le stockage local
 function getTodosFromLocalStorage() {
@@ -103,13 +118,20 @@ function getTodosFromLocalStorage() {
 // Fonction pour afficher les tâches sauvegardées lors du chargement de la page
 function getTodos() {
   const todos = getTodosFromLocalStorage();
-  todos.forEach(todoText => createTodoElement(todoText));
+  todos.forEach(todo => {
+    createTodoElement(todo.text, todo.completed);
+    if (todo.completed) {
+      const todoItem = todoList.lastChild.querySelector(".todo-item");
+      todoItem.classList.add("completed");
+    }
+  });
 }
+
 
 // Fonction pour supprimer une tâche du stockage local
 function removeTodoFromLocalStorage(todoElement) {
   const todoText = todoElement.querySelector(".todo-item").innerText;
   const todos = getTodosFromLocalStorage();
-  const filteredTodos = todos.filter(todo => todo !== todoText);
+  const filteredTodos = todos.filter(todo => todo.text !== todoText);
   localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(filteredTodos));
 }
