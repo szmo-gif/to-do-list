@@ -1,24 +1,32 @@
+// Clé pour le stockage local
 const TODO_STORAGE_KEY = "todos";
+
+// Sélection des éléments HTML
 const todoInput = document.querySelector(".todo-input");
 const todoButton = document.querySelector(".todo-button");
 const todoList = document.querySelector(".todo-list");
 const filterOption = document.querySelector(".filter-todo");
 
+// Écouteurs d'événements
 todoButton.addEventListener("click", addTodo);
 todoList.addEventListener("click", deleteCheck);
 filterOption.addEventListener("click", filterTodo);
 document.addEventListener("DOMContentLoaded", getTodos);
 
+// Fonction pour ajouter une tâche
 function addTodo(event) {
   event.preventDefault();
+  // Récupération du texte de la tâche et vérification s'il est vide
   const todoText = todoInput.value.trim();
   if (todoText === "") return;
 
+  // Création de l'élément de tâche et enregistrement dans le stockage local
   createTodoElement(todoText);
   saveTodoToLocalStorage(todoText);
   todoInput.value = "";
 }
 
+// Fonction pour créer un nouvel élément de tâche
 function createTodoElement(todoText) {
   const todoDiv = document.createElement("div");
   todoDiv.classList.add("todo");
@@ -28,12 +36,14 @@ function createTodoElement(todoText) {
   newTodo.classList.add("todo-item");
   todoDiv.appendChild(newTodo);
 
+  // Ajout des boutons de complétion et de suppression
   createButton(todoDiv, "complete-btn", '<i class="fa-solid fa-check"></i>');
   createButton(todoDiv, "trash-btn", '<i class="fa-solid fa-trash"></i>');
 
   todoList.appendChild(todoDiv);
 }
 
+// Fonction pour créer un bouton
 function createButton(parent, buttonClass, innerHTML) {
   const button = document.createElement("button");
   button.innerHTML = innerHTML;
@@ -41,11 +51,13 @@ function createButton(parent, buttonClass, innerHTML) {
   parent.appendChild(button);
 }
 
+// Fonction pour supprimer ou marquer une tâche comme complétée
 function deleteCheck(event) {
   const target = event.target;
   const todo = target.closest(".todo");
 
   if (target.classList.contains("trash-btn")) {
+    // Supprimer la tâche
     todo.classList.add("fall");
     removeTodoFromLocalStorage(todo);
     todo.addEventListener("transitionend", () => {
@@ -54,10 +66,12 @@ function deleteCheck(event) {
   }
 
   if (target.classList.contains("complete-btn")) {
+    // Marquer la tâche comme complétée
     todo.classList.toggle("completed");
   }
 }
 
+// Fonction pour filtrer les tâches affichées
 function filterTodo() {
   const todos = Array.from(todoList.children);
   todos.forEach(todo => {
@@ -74,21 +88,25 @@ function filterTodo() {
   });
 }
 
+// Fonction pour enregistrer une tâche dans le stockage local
 function saveTodoToLocalStorage(todoText) {
   const todos = getTodosFromLocalStorage();
   todos.push(todoText);
   localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(todos));
 }
 
+// Fonction pour récupérer les tâches depuis le stockage local
 function getTodosFromLocalStorage() {
   return JSON.parse(localStorage.getItem(TODO_STORAGE_KEY)) || [];
 }
 
+// Fonction pour afficher les tâches sauvegardées lors du chargement de la page
 function getTodos() {
   const todos = getTodosFromLocalStorage();
   todos.forEach(todoText => createTodoElement(todoText));
 }
 
+// Fonction pour supprimer une tâche du stockage local
 function removeTodoFromLocalStorage(todoElement) {
   const todoText = todoElement.querySelector(".todo-item").innerText;
   const todos = getTodosFromLocalStorage();
